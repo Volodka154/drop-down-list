@@ -13,11 +13,12 @@ const mass = ref([
   { id: 8, name: "Name 8" },
   { id: 9, name: "Name 9" }
 ])
+const label = ref("Выбор имен")
 </script>
 
 <template>
   <CheckboxList 
-    :label="'Выбор имен'"
+    :label="label"
     :massProps="mass"
   />
 </template>

@@ -13,6 +13,11 @@ const isSelectedAll = ref(false)
 
 const changeShowModal = function() {
   isShowModal.value = !isShowModal.value
+  if (isShowModal.value) {
+    newMass.value.forEach(item => {
+      document.getElementById('checkbox-item-' + item.id).classList.add('checkbox-item-active')
+    })
+  }
 }
 const selectItem = function(id) {
   let findIt = newMass.value.findIndex(item => item.id === id)
@@ -30,7 +35,6 @@ const selectAll = function() {
   // отключаем нажатие при работе анимации
   document.getElementById('select-all').disabled = true
   selectedAllWatcher.value = 0
-
   if (props.massProps.length !== newMass.value.length) {
     isSelectedAll.value = true
     // перезапишем newMass
@@ -46,33 +50,21 @@ const selectAll = function() {
 watch(selectedAllWatcher, () => {
   // время анимации одой строки
   const ms = 25
-  // выбрать все
-  if (isSelectedAll.value) {
-    // условие для заполнения всех строк
-    if (selectedAllWatcher.value < props.massProps.length) {
-      // количество видимых анимированных строк (нет смысла анимировать строки, которые не будет видно)
-      if (selectedAllWatcher.value < 5) {
-        setTimeout(() => {
-          document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.add('checkbox-item-active')
-          selectedAllWatcher.value++
-        }, ms)
-      } else {
-          document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.add('checkbox-item-active')
-          selectedAllWatcher.value++
-      }
-    }
-  // снять выделение
-  } else {
-    if (selectedAllWatcher.value < props.massProps.length) {
-      if (selectedAllWatcher.value < 5) {
-        setTimeout(() => {
-          document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.remove('checkbox-item-active')
-          selectedAllWatcher.value++
-        }, ms)
-      } else {
-          document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.remove('checkbox-item-active')
-          selectedAllWatcher.value++
-      }
+  // условие для заполнения всех строк
+  if (selectedAllWatcher.value < props.massProps.length) {
+    // количество видимых анимированных строк (нет смысла анимировать строки, которые не будет видно)
+    if (selectedAllWatcher.value < 5) {
+      setTimeout(() => {
+        isSelectedAll.value
+          ? document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.add('checkbox-item-active')
+          : document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.remove('checkbox-item-active')
+        selectedAllWatcher.value++
+      }, ms)
+    } else {
+      isSelectedAll.value
+        ? document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.add('checkbox-item-active')
+        : document.getElementById('checkbox-item-' + props.massProps[selectedAllWatcher.value].id).classList.remove('checkbox-item-active')
+      selectedAllWatcher.value++
     }
   }
   // когда заканчивается анимация разешаем нажимать
@@ -98,7 +90,7 @@ watch(selectedAllWatcher, () => {
   </div>
   <Transition name="fade">
     <div
-      v-if="isShowModal" 
+      v-show="isShowModal" 
       class="checkbox-content"
     >
       <option
